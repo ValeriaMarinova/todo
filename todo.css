@@ -1,0 +1,55 @@
+[data-text-field] {
+    flex: 1;
+    padding: 10px 150px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.add-btn { 
+    padding: 10px 20px;
+    background-color: rgba(239, 131, 246, 0.93);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.delete-btn {
+    display: block;
+    padding: 10px 20px;
+    background-color: rgb(246, 135, 135);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 8px 0;
+}
+
+.edit-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 16px;
+    background: #e7bed3;
+    color: white;
+}

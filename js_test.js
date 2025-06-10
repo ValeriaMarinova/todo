@@ -1,28 +1,40 @@
 const input = document.querySelector("[data-text-field]");
 const container = document.querySelector("[data-todo-container]");
 const deletedContainer = document.querySelector("[data-deleted-container]"); 
+const addElement = document.querySelector("[button-add-task]");
 
-let testList = [];
+let toDoList = []; 
 let deletedTasks = [];
 let returnTask = [];
 
-function addBtn() {
-    const addElement = document.createElement("button");
-    addElement.textContent = "Добавить задачу";
-    addElement.className = "add-btn";
-
-    addElement.addEventListener("click", () => {
-        const newText = input.value.trim();
-        if (newText === "") return;
-        const timeAdd = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        testList.push(`${newText} (${timeAdd})`);
-        input.value = "";
-        renderTodoList();
-    })
-    return addElement;
+function main() {
+    renderTodoList();
+    renderDeletedTasks();
 }
 
+function addBtn() {
+        addElement.textContent = "Добавить задачу";
+        addElement.className = "add";
+        addElement.addEventListener("click", handlerClick); 
+        return addElement;
+        } 
+
+function handlerClick() {
+        const newText = input.value.trim();
+        if (newText === "") return;
+        const timeAdd = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        });
+            toDoList.push({
+                text: newText,
+                timeAdd: timeAdd,
+            }),
+            input.value = "";
+            // renderTodoList();
+            main();
+        }
+    
 function createDeleteButton() {
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Удалить";
@@ -31,11 +43,20 @@ function createDeleteButton() {
 }
 
 function deleteClick(index) {
-    const timeDel = new Date().toLocaleDateString([], { hour: '2-digit', minute: '2-digit'});
-    deletedTasks.push(`${testList[index]} (${timeDel})`);
-    testList.splice(index, 1);
-    renderTodoList();
-    renderDeletedTasks();
+    const timeDel = new Date().toLocaleDateString([], { 
+        hour: '2-digit', 
+        minute: '2-digit'
+    });
+
+    deletedTasks.push({
+        task: toDoList[index],
+        deletedAt: timeDel
+    });
+
+    console.log(deletedTasks);
+
+    toDoList.splice(index, 1);
+    main();
 }
 
 function delBtn(index, todoElement) {
@@ -47,37 +68,39 @@ function delBtn(index, todoElement) {
 function retBtn(index, todoElementRet) {
     const returnBtn = document.createElement("button");
     returnBtn.textContent = "Вернуть";
-    returnBtn.className = "edit-btn";
+    // returnBtn.className = "edit-btn";
+    returnBtn.className = "return-btn";
 
-    returnBtn.addEventListener("click", () => {
-        testList.push(deletedTasks[index]);
-        deletedTasks.splice(index, 1);
-        console.log(returnTask);
-        renderTodoList();
-        renderDeletedTasks();
-    });
+    returnBtn.addEventListener("click", () => handlerClickRet(index));
     todoElementRet.appendChild(returnBtn);
+    return returnBtn;
+};
+
+function handlerClickRet(index) {
+    toDoList.push(deletedTasks[index].task);
+        console.log(deletedTasks[index].task);
+        deletedTasks.splice(index, 1);
+        console.log(deletedTasks[index]);
+
+        main();
+};
+
+function createInput(type,value) {
+    const input = document.createElement("input");
+    input.type = type;
+    input.value = value;
+    return input;
 }
 
 function createEditInput(currentText) {
-    const editInput = document.createElement("input");
-    editInput.type = "text";
-    editInput.value = currentText;
-    return editInput;
-}
-
-function editSave(e, editInput, index, timeEdit, listElement) {
-    if (e.key === "Enter") {
-        const newText = editInput.value.trim();
-        if (newText) {
-            testList[index] = `${newText} (${timeEdit})`;
-            renderTodoList();
-        }
-    }
+    return createInput("text", currentText);
 }
 
 function editClick(index, listElement) {
-    const timeEdit = new Date().toLocaleDateString([], { hour: '2-digit', minute: '2-digit'});
+    const timeEdit = new Date().toLocaleDateString([], { 
+        hour: '2-digit', 
+        minute: '2-digit'
+    });
     const nowText = listElement.querySelector("span").textContent;
 
     const editInput = createEditInput(nowText);
@@ -86,31 +109,50 @@ function editClick(index, listElement) {
 
     editInput.focus();
     editInput.addEventListener("keydown", (e) => {
-        editSave(e, editInput, index, timeEdit, listElement);
+        editSave(e, editInput, index, timeEdit, listElement, toDoList);
     });
+}
+
+function editSave(e, editInput, index, timeEdit, listElement, toDoList) {
+    if (e.key === "Enter") {
+        const newText = editInput.value.trim();
+        if (newText) {
+        toDoList[index] = {
+        text: newText, 
+        editedAt: timeEdit,
+        timestamp: Date.now()
+        };
+        main();
+        }
+    }
+}
+
+function handleEditClick(index, listElement, toDoList){
+    editClick(index,listElement,toDoList)
 }
 
 function editBtn(index, listElement) {
     const editBtn = document.createElement("button");
     editBtn.textContent = "Редактировать";
     editBtn.className = "edit-btn";
-    editBtn.addEventListener("click", () => {
-        editClick(index, listElement);
-    });
+    editBtn.addEventListener("click", () => handleEditClick(index,listElement,toDoList));
     return editBtn;
 }
 
 function renderDeletedTasks() {
     deletedContainer.innerHTML = "<h3>Удаленные задачи:</h3>";
+    deletedContainer.className = "del-task";
     const headerRow = document.createElement("div");
     deletedContainer.appendChild(headerRow);
     deletedTasks.forEach((task, index) => {
         const taskContainer = document.createElement("div");
         taskContainer.className = "deleted-task";
+
         const taskEl = document.createElement("div");
         taskEl.className = "deleted-task";
-        taskEl.textContent = task;
+        taskEl.textContent = `${task.task.text} (удалена ${task.deletedAt})`;/////
         taskContainer.appendChild(taskEl);
+
         retBtn(index, taskContainer);
         deletedContainer.appendChild(taskContainer);
     });
@@ -118,14 +160,17 @@ function renderDeletedTasks() {
 
 function todoText(todo) {
     const todolistText = document.createElement("span");
-    todolistText.textContent = todo;
+    const displayTime = todo.editedAt || todo.timeAdd;
+    todolistText.textContent = `${todo.text} (${displayTime})`;
     return todolistText;
 }
 
 function todoElement(todo, index) {
     const todolistElement = document.createElement("div");
-    todolistElement.appendChild(todoText(todo));
 
+    todolistElement.className = "task-actions";
+
+    todolistElement.appendChild(todoText(todo));
     delBtn(index, todolistElement);
         todolistElement.appendChild(editBtn(index, todolistElement));
         return todolistElement
@@ -136,20 +181,21 @@ function renderTodoList() {
     const el = document.createElement("div");
     el.appendChild(input);
     el.appendChild(addBtn());
+    // el.textContent = task.text; 
     container.appendChild(el);
 
-    testList.forEach((todo, index) => {
+    toDoList.forEach((todo, index) => {
         container.appendChild(todoElement(todo, index));
     });
 }
-renderTodoList();
-renderDeletedTasks();
+
+main();
 
 input.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
         const text = input.value.trim();
         if (text) {
-            testList.push(text);
+            toDoList.push(text);
             input.value = "";
             renderTodoList();
         }

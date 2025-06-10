@@ -1,7 +1,7 @@
 [data-text-field] {
     flex: 1;
     padding: 10px 150px;
-    font-size: 16px;
+    font-size: 20px;
     border: 1px solid #ddd;
     border-radius: 5px;
     background: #fff;
@@ -21,7 +21,8 @@
 }
 
 .delete-btn {
-    display: block;
+    /* display: flex;  */
+    margin-left: 20px !important;
     padding: 10px 20px;
     background-color: rgb(246, 135, 135);
     color: white;
@@ -31,8 +32,38 @@
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
-    vertical-align: middle;
     text-align: center;
+}
+
+.edit-btn, .return-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 16px;
+    background: #e7bed3;
+    color: white;
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto; 
+}
+
+[data-todo-container] > div,
+[data-deleted-container] > div {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    margin: 5px auto;
+    border: 1px solid #ddd;
+    font-size: 20px;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
 }
 
 .todo-item {
@@ -43,13 +74,15 @@
     margin: 8px 0;
 }
 
-.edit-btn {
+.del-task {
+    margin: 0 150px;
+}
+
+.add {
+    display: inline-block;
     padding: 10px 20px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    margin-left: 8px;
-    font-size: 16px;
-    background: #e7bed3;
+    background: #f069d9;
     color: white;
+    cursor: pointer;
+    border-radius: 4px;
 }
